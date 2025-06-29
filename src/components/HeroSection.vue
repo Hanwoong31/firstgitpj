@@ -1,11 +1,8 @@
 <template>
   <section class="hero">
-    <!-- 배경 이미지 오버레이 -->
     <div class="overlay"></div>
-
-    <!-- 실제 내용 -->
     <div class="content">
-      <h1 class="title">나는 음악처럼 살아간다.</h1>
+      <h1 class="title">{{ typedText }}<span class="cursor">|</span></h1>
       <p class="subtitle">
         감정과 이성의 균형 위에서,<br />
         창조와 해석 사이를 오가는 삶.<br />
@@ -18,7 +15,22 @@
 </template>
 
 <script setup>
-// 특별한 로직 없음
+import { ref, onMounted } from 'vue';
+
+const fullText = '나는 음악처럼 살아간다.';
+const typedText = ref('');
+let index = 0;
+
+onMounted(() => {
+  const interval = setInterval(() => {
+    if (index < fullText.length) {
+      typedText.value += fullText[index];
+      index++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 120); // 타이핑 속도 (ms)
+});
 </script>
 
 <style scoped>
@@ -30,43 +42,53 @@
   height: 100vh;
   padding: 2rem;
   text-align: center;
-  background: linear-gradient(135deg, #4e2a1e, #8b3a2c); /* 바이올린 느낌 */
+  background: linear-gradient(135deg, #4e2a1e, #8b3a2c);
   background-size: cover;
   background-position: center;
   overflow: hidden;
 }
 
-/* 이미지 오버레이 */
 .overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/01_sunrise.png'); /* public 폴더의 이미지 사용 */
+  background-image: url('/01_sunrise.png');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-  opacity: 0.15; /* 은은하게 */
+  opacity: 0.15;
   z-index: 1;
 }
 
-/* 콘텐츠는 위에 떠있게 */
 .content {
   position: relative;
   z-index: 2;
   max-width: 800px;
 }
 
-/* 타이틀 텍스트 */
 .title {
   font-size: 3rem;
   font-weight: bold;
   margin-bottom: 1.2rem;
   color: #ffffff;
+  white-space: nowrap;
 }
 
-/* 서브텍스트 */
+.cursor {
+  display: inline-block;
+  width: 1px;
+  background-color: white;
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
 .subtitle {
   font-size: 1.25rem;
   line-height: 1.8;
@@ -74,7 +96,6 @@
   margin-bottom: 2rem;
 }
 
-/* CTA 버튼 */
 .cta-button {
   display: inline-block;
   padding: 0.8rem 1.5rem;
